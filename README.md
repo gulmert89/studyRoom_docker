@@ -1,30 +1,56 @@
-# Docker and Kubernetes The Complete Guide
-## Section 1: Dive Into Docker!
-### Lesson 4: What is Docker?
-* Docker, gets the images from Docker Hub.
-* Container is a program with its own isolated set of hardware resources (memory, networking, hdd vs.) _(see: Lesson 13)_
-
-### Lesson 5: -
+# 1. Course: `Docker and Kubernetes The Complete Guide`
+## 1.1. Dive Into Docker!
+### 1.1.4. What is Docker?
+* Docker makes it really easy to install and run software without worrying about setup or dependencies.
+* Docker Ecosysystem:
+    * Docker Client
+    * Docker Hub
+    * Docker Machine
+    * Docker Image
+    * Docker Server
+    * Docker Compose
+* Docker gets the images from Docker Hub.
+* Docker image is a single file with all the dependencies and configurations required to run a program.
+* Docker container is an instance of an image. It runs a program. There could be multiple containers link to one image. It is a program with its own isolated set of hardware resources (memory, networking, hdd vs.)
 * Docker installation has "**Docker CLI**" & "**Docker Server/Daemon**"
+* Output of `docker run hello-world`:
+```
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
 
-### Lesson 13: What's a Container?
-* **Namespacing**: let's say program A runs in Py2, while program B in Py3. With namespacing, we can redirect these A & B which sends system call to kernel in the hard drive where we installed Py2 and Py3 to different partitions. _(i.e. namespacing: isolating resources per process or group of processes)_
-* **Control groups (cgroups)**: limit amount of resources used per process
-* Namespacing & cgroups belong to Linux only!
-* **Container**: A process / set of processes that have a grouping of resources specifically assigned to it.
-* **Image**: Snapshot of the file system along with very specific startup commands.
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+```
+### 1.1.10. What's a Container?
+> **Namespacing**: let's say program A runs in Py2, while program B in Py3. With namespacing, we can redirect these A & B which sends system call to kernel in the hard drive where we installed Py2 and Py3 to different partitions/segments. _(i.e. namespacing: isolating resources per process or group of processes)_
 
-## Section 2: Manipulating Containers with The Docker Client
-### Lesson 16: Overriding Default Commands
-\> `docker run "image_name" some_command` (to override the default command!)
+> **Control groups (cgroups)**: limit amount of resources used per process
 
-\> `docker run busybox ls`: list the default folders in _busybox_ such as bin, dev, etc, home, proc, root. However, for the _hello-world_ image, `ls` command throws error since IT DOESN'T EXIST in its file system.
-
-### Lesson 17: Listing Running Containers
-\> `docker ps`: list all the running containers
-
-\> `docker ps --all`: listing all the containers we ever created.
-
+> Namespacing & cgroups belong to Linux only! We can run Docker in our MacOS or Windows too because they are running a Linux Virtual Machine to create a Linux kernel. Run `docker version` on Windows and the terminal will tell you that Docker is running on `OS/Arch: linux/amd64`.
+* **Container**: A process / set of processes that have a grouping of resources specifically assigned to it. i.e. Portion of hard drive, network, ram, cpu etc. made available to a process.
+* **Image**: Snapshot of the file system along with very specific startup commands. _(i.e. FS Snapshot + Startup command)_
+## 1.2. Manipulating Containers with The Docker Client
+### 1.2.12. Docker Run in Detail
+* `docker run <image name>`
+    * `docker`: Reference the Docker Client
+    * `run`: Try to create and run a container
+    * `<image name>`: name of image to use for this container
+### 1.2.13. Overriding Default Commands
+* `docker run <image name> some_command`
+    * `some_command` overrides the default command!
+* `docker run busybox ls`
+    * Lists the default folders in _busybox_ such as bin, dev, etc, home, proc, root. However, for the _hello-world_ image, `ls` command throws error since `ls` command doesn't exist in its file system image.
+### 1.2.14. Listing Running Containers
+* `docker ps`
+    * Lists all the running containers.
+* `docker ps --all`
+    * Lists all the containers we have ever created.
 ### Lesson 18: Container Lifecycle
 * docker run = docker create + docker start
 
