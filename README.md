@@ -1,6 +1,6 @@
 # 1. Course: `Docker and Kubernetes The Complete Guide`
 ## 1.1. Dive Into Docker!
-### 1.1.4. What is Docker?
+### 1.1.1. What is Docker?
 * Docker makes it really easy to install and run software without worrying about setup or dependencies.
 * Docker Ecosysystem:
     * Docker Client
@@ -11,7 +11,7 @@
     * Docker Compose
 * Docker gets the images from Docker Hub.
 * Docker image is a single file with all the dependencies and configurations required to run a program.
-* Docker container is an instance of an image. It runs a program. There could be multiple containers link to one image. It is a program with its own isolated set of hardware resources (memory, networking, hdd vs.)
+* Docker container is an instance of an image. It runs a program. There could be multiple containers linked to one image. It is a program with its own isolated set of hardware resources (memory, networking, hdd vs.).
 * Docker installation has "**Docker CLI**" & "**Docker Server/Daemon**"
 * Output of `docker run hello-world`:
 ```
@@ -20,75 +20,72 @@ This message shows that your installation appears to be working correctly.
 
 To generate this message, Docker took the following steps:
  1. The Docker client contacted the Docker daemon.
- 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
-    (amd64)
- 3. The Docker daemon created a new container from that image which runs the
-    executable that produces the output you are currently reading.
- 4. The Docker daemon streamed that output to the Docker client, which sent it
-    to your terminal.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub. (amd64)
+ 3. The Docker daemon created a new container from that image which runs the executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it to your terminal.
 ```
-### 1.1.10. What's a Container?
+### 1.1.2. What's a Container?
 > **Namespacing**: let's say program A runs in Py2, while program B in Py3. With namespacing, we can redirect these A & B which sends system call to kernel in the hard drive where we installed Py2 and Py3 to different partitions/segments. _(i.e. namespacing: isolating resources per process or group of processes)_
 
 > **Control groups (cgroups)**: limit amount of resources used per process
 
 > Namespacing & cgroups belong to Linux only! We can run Docker in our MacOS or Windows too because they are running a Linux Virtual Machine to create a Linux kernel. Run `docker version` on Windows and the terminal will tell you that Docker is running on `OS/Arch: linux/amd64`.
-* **Container**: A process / set of processes that have a grouping of resources specifically assigned to it. i.e. Portion of hard drive, network, ram, cpu etc. made available to a process.
+* **Container**: A process or set of processes that have a grouping of resources specifically assigned to it. i.e. Portion of hard drive, network, ram, cpu etc. made available to a process.
 * **Image**: Snapshot of the file system along with very specific startup commands. _(i.e. FS Snapshot + Startup command)_
 ## 1.2. Manipulating Containers with The Docker Client
-### 1.2.12. Docker Run in Detail
+### 1.2.1. Docker Run in Detail
 * `docker run <image name>`
     * `docker`: Reference the Docker Client
     * `run`: Try to create and run a container
     * `<image name>`: name of image to use for this container
-### 1.2.13. Overriding Default Commands
+### 1.2.2. Overriding Default Commands
 * `docker run <image name> some_command`
     * `some_command` overrides the default command!
 * `docker run busybox ls`
     * Lists the default folders in _busybox_ such as bin, dev, etc, home, proc, root. However, for the _hello-world_ image, `ls` command throws error since `ls` command doesn't exist in its file system image.
-### 1.2.14. Listing Running Containers
-* `docker ps`
-    * Lists all the running containers.
-* `docker ps --all`
-    * Lists all the containers we have ever created.
-### Lesson 18: Container Lifecycle
+### 1.2.3. Listing Running Containers
+* `docker ps`: Lists all the running containers.
+* `docker ps --all`: Lists all the containers we have ever created.
+### 1.2.4: Restarting Stopped Container
 * docker run = docker create + docker start
-
-\> `docker run`: Used for creating and running a container from an image.
-
-\> `docker create "image name"`
-
-\> `docker start "container id"`
-	
-\> `docker start -a asg786`: (`-a`: attach to the container and watch for output coming from it and show it on my terminal!)
-
+* `docker run`: Used for creating and running a container from an image.
+* `docker start -a abcd1234`: **-a** attaches to the container and watch for output coming from it and show it on my terminal!
 * By default, `docker run` will show all the logs etc. but `docker start` won't show you what is coming from the container.
+* If you run a container via `docker start -a abcd1234`, it will run ***the container's*** default command! For example, the _busybox_ image comes with a default command `sh` but let's say we overrode it with `echo hi there` and created a container out of it. When we initiate that container again, it runs `echo hi there` and we cannot put extra command to it like `docker start -a abcd1234 echo hello world`. It throws an error.
+### 1.2.5 Removing Stopped Containers
+* Output of `docker container prune` (Delete all stopped containers):
+> WARNING! This will remove all stopped containers. <br>Are you sure you want to continue? [y/N]
 
-### Lesson 19: Restarting Stopped Containers
-\> `docker ps --all`. I chose one of the earlier containers listed by this command, e.g. 2658434a46d7 which pings google. Then I start it again:
+* Output of `docker system prune` (Delete all stopped containers):
+> WARNING! This will remove:
+> <br> \- all stopped containers
+> <br> \- all networks not used by at least one container
+> <br> \- all dangling images
+> <br> \- all dangling build cache
+> <br> Are you sure you want to continue? [y/N]
+### 1.2.6 Retrieving Log Outputs
+* `docker logs <container id>`: It's not _restarting_ or _rerunning_ the container, but gets the log of that initiated container.
+### 1.2.7 Stopping Containers
+* `docker stop <container id>`: Sends `SIGTERM` -terminate signal- message. It gives the process a bit of time to clean up, ends the job or prints a message etc. 10 secs later, it kills the process anyway!
+* `docker kill <container id>`: Sends `SIGKILL` -kill signal- message. Immediately shuts down the process, no grace period.
+### 1.2.8 Multi-Command Containers
+* Without docker,
+    * we start `redis-server` (and in-memory, it is ready to store data now with this command),
+    * then open a `redis-cli` to issue commands to the redis server.
+* When we run `docker run redis`, we can't run `redis-cli` in another terminal because it runs inside the container! We need to get inside this container to enter this command!
 
-\> `docker start -a 2658434a46d7`
+x<br>
+x<br>
+x<br>
+x<br>
+============OLD NOTES BELOW. WILL BE REVISED.===========
 
-### Lesson 20: Removing Stopped Containers
-\> `docker system prune`: Delete all stopped containers.
-
-### Lesson 21: Retrieving Log Outputs
-\> `docker logs "container id"`: It's not restarting or rerunning the container, but gets the log of that initiated container.
-
-### Lesson 22: Stopping Containers
-\> `docker stop "container id"`: Sends SIGTERM -terminate signal- message. It gives the process a bit of time to clean up, ends the job or prints a message etc. 10 secs later, it kills the process anyway!
-
-\> `docker kill "container id"`: Sends SIGKILL -kill signal- message. Immediately shuts down the process, no grace period.
-
-### Lesson 23: Multi-Command Containers
-* W/o docker: start _redis-server_, open a _redis-cli_ to issue commands.
-
-\> `docker run redis` but we can't run _redis-cli_ in another terminal. We need to get inside this container to enter this command!
+===========OLD NOTES BELOW. WILL BE REVISED.===========
 
 ### Lesson 24: Executing Commands in Running Containers
-\> `docker exec -it "container id" command_to_execute`: Execute an additional command in a container (Check help file for the flags.)
+* `docker exec -it "container id" command_to_execute`: Execute an additional command in a container (Check help file for the flags.)
 
-\> `docker exec -it 2e532f124ba8 redis-cli`
+* `docker exec -it 2e532f124ba8 redis-cli`
 
 ### Lesson 25: The Purpose of the IT (-i -t) Flag
 * When you are running Docker on your machine, every single container you are running is running inside of a VM running Linux.
@@ -101,7 +98,7 @@ To generate this message, Docker took the following steps:
 ### Lesson 26: Getting a Command Prompt in a Container
 * We'll open up a shell and not use `docker exec` over and over again.
 
-\> `docker exec -it 2e532f124ba8 sh`: Opens up a shell. Then comes:<br>
+* `docker exec -it 2e532f124ba8 sh`: Opens up a shell. Then comes:<br>
 `# echo "hi there"`<br>
 `# export b=5`<br>
 `# echo $b` --> _Outputs_ `5`<br>
@@ -110,7 +107,7 @@ To generate this message, Docker took the following steps:
 * What is `sh`? Well, _bash_, _powershell_, _zsh_, _sh_ are command processors/shell.
 
 ### Lesson 27: Starting with a Shell
-\> `docker run -it busybox sh`: Directly starts with a shell, but most probably you are not be running any another process. So, it's more common to start your container and then later attach to it by running `docker exec` command.
+* `docker run -it busybox sh`: Directly starts with a shell, but most probably you are not be running any another process. So, it's more common to start your container and then later attach to it by running `docker exec` command.
 
 ### Lesson 28: Container Isolation
 * Between two containers, they don't automatically share their file systems.
@@ -125,7 +122,7 @@ To generate this message, Docker took the following steps:
     * Run some commands to install programs (`RUN` command)
     * Specify a startup command (`CMD` command)
 ### Lesson 31: Building a Dockerfile
-\> `docker build .` : This uses the Dockerfile in that folder.
+* `docker build .` : This uses the Dockerfile in that folder.
 
 * Then it builds the image and says `Successfully built 7bb33751abb2`. You can use `docker run 7bb33751abb2` to run the container.
 ### Lesson 33: What's a Base Image?
@@ -142,24 +139,24 @@ To generate this message, Docker took the following steps:
 ### Lesson 37: Tagging an Image
 * It is easier to use an image tag instead of its image ID. So, you can use the `-t` tag flag to define a name to your image.
 
-\> `docker build -t mert/mydockerproject:latest .`
+* `docker build -t mert/mydockerproject:latest .`
 
 * This is a naming convention:
     * `your_docker_id/repo_or_project_name:version`
     * It's better to use a version number instead of `latest`.
 * Then you use:
 
-\> `docker run mert/mydockerproject` (If you don't specify version, it'll use the latest by default.)
+* `docker run mert/mydockerproject` (If you don't specify version, it'll use the latest by default.)
 ### Lesson 38: Manual Image Generation with Docker Commit
 * We are not going to use this method much or at all but it's fun to learn.
 
-\> `docker run -it alpine sh` <br>
-\> `# apk add --update redis` (we are in that container's shell!)<br>
+* `docker run -it alpine sh` <br>
+* `# apk add --update redis` (we are in that container's shell!)<br>
 _- - - Switch to another terminal - - -_<br>
-\> `docker ps` (Get the running container ID) <br>
-\> `docker commit -c "CMD ['redis-server']" 42d67b4a3bcc` <br>
-\> `sha256:598729347yuıh54jb43k25hj4b6........` <br>
-\> `docker run 598729347yu` (Docker gets the rest of the ID. Don't need to write it all.)
+* `docker ps` (Get the running container ID) <br>
+* `docker commit -c "CMD ['redis-server']" 42d67b4a3bcc` <br>
+* `sha256:598729347yuıh54jb43k25hj4b6........` <br>
+* `docker run 598729347yu` (Docker gets the rest of the ID. Don't need to write it all.)
 
 ## Section 4: Making Real Projects with Docker (`simpleweb`)
 ### Lesson 42: A Few Planned Errors
@@ -172,15 +169,15 @@ _- - - Switch to another terminal - - -_<br>
 * The previous container doesn't have your local build files! Thus, you need to copy them into that container.
 * In the command `COPY ./ ./`, the first path is where your local files is. You guess the second path :D
 ### Lesson 47: Container Port Mapping
-\> `docker run -p 8080:8080 image_id/name`: Route incoming requests to the (first) port on local host to the (second) port inside the container.
+* `docker run -p 8080:8080 image_id/name`: Route incoming requests to the (first) port on local host to the (second) port inside the container.
 * The ports don't need to be identical. Our port could be 5000. (e.g. `-p 5000:8080`)
 ### Lesson 48: Specifying a Working Directory
 * The command for it is `WORKDIR`.
 * You can directly enter to that WORKDIR folder. Example with `exec` command (for fun. there could be another way.):
-    * \> `docker run -p 8080:8080 mert/simpleweb`
+    * `docker run -p 8080:8080 mert/simpleweb`
     * In another terminal:
-        * \> `docker ps`
-        * \> `docker exec -it 1f37acb2b2a8 sh`
+        * `docker ps`
+        * `docker exec -it 1f37acb2b2a8 sh`
         * ...and we are in the `/usr/app` directory.
 ### Lesson 49: Unnecessary Rebuilds
 * If you change the `index.js` file, you have to build the image once again.
@@ -216,8 +213,8 @@ _- - - Switch to another terminal - - -_<br>
 * `port: 6379` is the default port but we added it anyway.
 * Then docker compose will automatically connect those containers.
 ### Lesson 57: Docker Compose Commands
-\> `docker-compose up` is the equivalent of `docker run myimage`<br>
-\> `docker-compose up --build` is `docker build .` + `docker run myimage`<br>
+* `docker-compose up` is the equivalent of `docker run myimage`<br>
+* `docker-compose up --build` is `docker build .` + `docker run myimage`<br>
 ### Lesson 58: Stopping Docker Compose Containers
 * Launch in the background: `docker-compose up -d`.
 * Since we have multiple containers running in our docker-compose, it would be a pain to stop them all one by one with `docker stop container_id`. So, we have `docker-compose down`.
