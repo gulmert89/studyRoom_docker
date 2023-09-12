@@ -44,15 +44,19 @@ To generate this message, Docker took the following steps:
 * `docker run busybox ls`
     * Lists the default folders in _busybox_ such as bin, dev, etc, home, proc, root. However, for the _hello-world_ image, `ls` command throws error since `ls` command doesn't exist in its file system image.
 ### 1.2.3. Listing Running Containers
-* `docker ps`: Lists all the running containers.
-* `docker ps --all`: Lists all the containers we have ever created.
-### 1.2.4: Restarting Stopped Container
+* `docker ps`
+    * Lists all the running containers.
+* `docker ps --all`
+    * Lists all the containers we have ever created.
+### 1.2.4. Restarting Stopped Container
 * docker run = docker create + docker start
-* `docker run`: Used for creating and running a container from an image.
-* `docker start -a abcd1234`: **-a** attaches to the container and watch for output coming from it and show it on my terminal!
+* `docker run`
+    * Used for creating and running a container from an image.
+* `docker start -a abcd1234`
+    * **-a** attaches to the container and watch for output coming from it and show it on my terminal!
 * By default, `docker run` will show all the logs etc. but `docker start` won't show you what is coming from the container.
 * If you run a container via `docker start -a abcd1234`, it will run ***the container's*** default command! For example, the _busybox_ image comes with a default command `sh` but let's say we overrode it with `echo hi there` and created a container out of it. When we initiate that container again, it runs `echo hi there` and we cannot put extra command to it like `docker start -a abcd1234 echo hello world`. It throws an error.
-### 1.2.5 Removing Stopped Containers
+### 1.2.5. Removing Stopped Containers
 * Output of `docker container prune` (Delete all stopped containers):
 > WARNING! This will remove all stopped containers. <br>Are you sure you want to continue? [y/N]
 
@@ -63,41 +67,32 @@ To generate this message, Docker took the following steps:
 > <br> \- all dangling images
 > <br> \- all dangling build cache
 > <br> Are you sure you want to continue? [y/N]
-### 1.2.6 Retrieving Log Outputs
-* `docker logs <container id>`: It's not _restarting_ or _rerunning_ the container, but gets the log of that initiated container.
-### 1.2.7 Stopping Containers
-* `docker stop <container id>`: Sends `SIGTERM` -terminate signal- message. It gives the process a bit of time to clean up, ends the job or prints a message etc. 10 secs later, it kills the process anyway!
-* `docker kill <container id>`: Sends `SIGKILL` -kill signal- message. Immediately shuts down the process, no grace period.
-### 1.2.8 Multi-Command Containers
+### 1.2.6. Retrieving Log Outputs
+* `docker logs <container id>`
+    * It's not _restarting_ or _rerunning_ the container, but gets the log of that initiated container.
+### 1.2.7. Stopping Containers
+* `docker stop <container id>`
+    * Sends `SIGTERM` -terminate signal- message. It gives the process a bit of time to clean up, ends the job or prints a message etc. 10 secs later, it kills the process anyway!
+* `docker kill <container id>`
+    * Sends `SIGKILL` -kill signal- message. Immediately shuts down the process, no grace period.
+### 1.2.8. Multi-Command Containers
 * Without docker,
     * we start `redis-server` (and in-memory, it is ready to store data now with this command),
     * then open a `redis-cli` to issue commands to the redis server.
 * When we run `docker run redis`, we can't run `redis-cli` in another terminal because it runs inside the container! We need to get inside this container to enter this command!
-
-x<br>
-x<br>
-x<br>
-x<br>
-============OLD NOTES BELOW. WILL BE REVISED.===========
-
-===========OLD NOTES BELOW. WILL BE REVISED.===========
-
-### Lesson 24: Executing Commands in Running Containers
-* `docker exec -it "container id" command_to_execute`: Execute an additional command in a container (Check help file for the flags.)
-
+### 1.2.9. Executing Commands in Running Containers
+* `docker exec -it <container id> <command>`
+    * Execute an additional command in a container (Check help file for the flags.)
 * `docker exec -it 2e532f124ba8 redis-cli`
-
-### Lesson 25: The Purpose of the IT (-i -t) Flag
+### 1.2.10. The Purpose of the IT (-i -t) Flag
 * When you are running Docker on your machine, every single container you are running is running inside of a VM running Linux.
-* Every process we create in a running Linux env has 3 communication channels attached to it:<br>`ping google.com`
-    * **STDIN**: Stuff you type
-    * **STDOUT & STDERR**: Stuff that shows up on the screen
+* Every process we create in a running Linux env has 3 communication channels attached to it:
+    1. **STDIN**: Stuff you type
+    2. & 3. **STDOUT & STDERR**: Stuff that shows up on the screen
 * `-i, --interactive`: Attaches to our terminal's STDIN.
-* `-t, --tty`: Basically, prettifies/formats and shows up the output on our screen (actually, it does a bit more than that).
-
-### Lesson 26: Getting a Command Prompt in a Container
+* `-t, --tty`: Basically, prettifies/formats and shows up the output on our screen (actually, it does a bit more than that. "Allocates a pseudo-TTY [terminal]" as stated in help file.).
+### 1.2.11. Getting a Command Prompt in a Container
 * We'll open up a shell and not use `docker exec` over and over again.
-
 * `docker exec -it 2e532f124ba8 sh`: Opens up a shell. Then comes:<br>
 `# echo "hi there"`<br>
 `# export b=5`<br>
@@ -105,24 +100,54 @@ x<br>
 `# redis-cli`<br>
 `# apt list` and then `exit` or **Ctrl+D** and so on...<br>
 * What is `sh`? Well, _bash_, _powershell_, _zsh_, _sh_ are command processors/shell.
-
-### Lesson 27: Starting with a Shell
-* `docker run -it busybox sh`: Directly starts with a shell, but most probably you are not be running any another process. So, it's more common to start your container and then later attach to it by running `docker exec` command.
-
-### Lesson 28: Container Isolation
+### 1.2.12. Starting with a Shell
+* `docker run -it busybox sh`
+    * Directly starts with a shell, but most probably you are not be running any another process. So, it's more common to start your container and then later attach to it by running `docker exec` command.
+### 1.2.13. Container Isolation
 * Between two containers, they don't automatically share their file systems.
 * For example, open two different terminals and run the same command: `docker run -it busybox sh`. Create a file in one of them and type `ls` in the other one. Yep, it's not there. They use two different, isolated FS. They have two distinct **CONTAINER ID** anyway.
-
-## Section 3: Building Custom Images Through Docker Server
-### Lesson 29: Creating Docker Images
-* Dockerfile: Configuration to define how our container should behave
-* Dockerfile --> Docker Client (cli) --> Docker Server (Take the dockerfile and builds a usable img) --> Usable Image
+## 1.3. Building Custom Images Through Docker Server
+### 1.3.1. Creating Docker Images
+* ``Dockerfile``: Configuration to define how our container should behave
+* ``Dockerfile`` --> ``Docker Client (cli)`` --> ``Docker Server`` (Take the dockerfile and builds a usable img) --> ``Usable Image``
 * Dockerfile flow:
-    * Specify a base img (`FROM` command)
-    * Run some commands to install programs (`RUN` command)
-    * Specify a startup command (`CMD` command)
-### Lesson 31: Building a Dockerfile
-* `docker build .` : This uses the Dockerfile in that folder.
+    1. Specify a base img (`FROM` command)
+    2. Run some commands to install programs (`RUN` command)
+    3. Specify a startup command (`CMD` command)
+### 1.3.2. Building a Dockerfile
+* **Note**: Students who have the most recent versions of Docker will now have ``Buildkit`` enabled by default. If so, you will notice a slightly different output in your terminal when building from a Dockerfile.
+    * To see the legacy outputs/logs, type: `docker build --no-cache --progress=plain .`
+    * To match the course output, you can disable `Buildkit`.
+        1. Click the Docker Icon in the system tray (Windows) or menu bar (macOS)
+        2. Select **Settings**
+        3. Select **Docker Engine**
+        4. Change ``buildkit`` from ``true`` to ``false``. And apply & restart.
+```js
+{
+    ...
+    "features": {
+        "buildkit": false
+        },
+    "experimental": false
+    ...
+}
+```
+* _Mert: I won't disable it. I liked the `buildkit` output more._
+* `docker build .`
+    * This uses the Dockerfile in that folder.
+
+
+
+========================================================<br>
+============OLD NOTES BELOW. WILL BE REVISED.===========
+========================================================<br>
+===========OLD NOTES BELOW. WILL BE REVISED.===========
+========================================================<br>
+
+
+
+
+
 
 * Then it builds the image and says `Successfully built 7bb33751abb2`. You can use `docker run 7bb33751abb2` to run the container.
 ### Lesson 33: What's a Base Image?
