@@ -135,28 +135,26 @@ To generate this message, Docker took the following steps:
 * _Mert: I won't disable it. I liked the `buildkit` output more._
 * `docker build .`
     * This uses the Dockerfile in that folder.
-
-
-
-========================================================<br>
-============OLD NOTES BELOW. WILL BE REVISED.===========
-========================================================<br>
-===========OLD NOTES BELOW. WILL BE REVISED.===========
-========================================================<br>
-
-
-
-
-
-
-* Then it builds the image and says `Successfully built 7bb33751abb2`. You can use `docker run 7bb33751abb2` to run the container.
-### Lesson 33: What's a Base Image?
+### 1.3.3. Dockerfile Teardown
+* `FROM`: Specifies the docker image we want to use as a base
+* `RUN`: Used to execute some command.
+* `CMD`: Specifies what should be executed when our image starts up a brand new container.
+* So, overall the structure is like that: `INSTRUCTION argument`
+    * e.g. `FROM alpine`, `CMD ["redis-server"]`, `RUN apk add --update redis`
+### 1.3.4. What's a Base Image?
 * Base image, like `alpine` contains useful set of programs. It's like an OS.
-### Lesson 34: The Build Process in Detail
+### 1.3.5. The Build Process in Detail
 * The `.` in `docker build .` is the **build context**. It's the set of files and folders that belong to our project which we want to encapsulate or wrap in the container.
 * Every command in the Dockerfile can be observed as `STEP 1/3: FROM alpine` etc.
 * After the first line of code (e.g. `FROM alpine`), following commands create an intermediate container (e.g. from the terminal log: `---> Running in 30as98d7fh`) to run the command on it. Then, the intermediate container gets shut down (e.g. from the terminal log: `Removing intermediate container 30as98d7fh`).
-* Each command gets the image from the previous step and creates a container out of it to build on top of it. When the commands end, the last container is presented to us as our usable image!
+* Each command gets the image from the previous step and creates a container out of it to build on top of it. When the commands end, the last container modifies the file system and the newest image is presented to us as our final image!
+
+<br>========================================================<br>
+============OLD NOTES BELOW. WILL BE REVISED.===========<br>
+========================================================<br>
+===========OLD NOTES BELOW. WILL BE REVISED.===========<br>
+========================================================<br>
+
 ### Lesson 36: Rebuilds with Cache
 * Assume we added another `RUN` command (e.g. `RUN apk add --updage gcc`) to the Dockerfile and build it once more. This time, the Docker will use the cache and don't create a new intermediate container as mentioned above to fetch and install that package previously built. See the `---> Using cache` line in the terminal log.
 * This makes Docker installs much more faster.
