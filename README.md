@@ -174,10 +174,19 @@ Instead, try running the command like this:<br>
     * `docker run 598729347yu` (Docker gets the rest of the ID. Don't need to write it all.)
 ## 1.4. Making Real Projects with Docker (`simpleweb`)
 ### 1.4.1. A Few Planned Errors
-* `npm install` the dependencies for Node JS Apps.
-* `npm start` to start up the server.
-
-
+* Remember the legacy builder command for more verbose:
+    * `docker build --no-cache --progress=plain .`
+* `npm install`: the dependencies for Node JS Apps.
+* `npm start`: to start up the server.
+* **npm:** Node Package Manager
+### 1.4.2. Base Image Issues
+* You can look for specific tags from images on the Hub.
+* `alpine` version/tag means that you are using the most stripped down version of that image.
+### 1.4.3. Copying Build Files
+* The previous container doesn't have your local build files! Thus, you need to copy them into that container.
+* In the command `COPY ./ ./`
+    * the first `./` is the path to folder to copy from on _your machine_ relative to build context (which comes from `docker build .`),
+    * the second `./` is the place to copy stuff to inside _the container_.
 
 
 
@@ -194,12 +203,7 @@ Instead, try running the command like this:<br>
 
 
 
-### Lesson 44: Base Image Issues
-* You can look for specific tags from images on the Hub.
-* `alpine` version/tag means that you are using the most stripped down version of that image.
-### Lesson 46: Copying Build Files
-* The previous container doesn't have your local build files! Thus, you need to copy them into that container.
-* In the command `COPY ./ ./`, the first path is where your local files is. You guess the second path :D
+
 ### Lesson 47: Container Port Mapping
 * `docker run -p 8080:8080 image_id/name`: Route incoming requests to the (first) port on local host to the (second) port inside the container.
 * The ports don't need to be identical. Our port could be 5000. (e.g. `-p 5000:8080`)
