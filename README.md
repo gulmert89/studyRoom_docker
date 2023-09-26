@@ -14,22 +14,20 @@
 * Docker container is an instance of an image. It runs a program. There could be multiple containers linked to one image. It is a program with its own isolated set of hardware resources (memory, networking, hdd vs.).
 * Docker installation has "**Docker CLI**" & "**Docker Server/Daemon**"
 * Output of `docker run hello-world`:
-```
-Hello from Docker!
-This message shows that your installation appears to be working correctly.
+    ```
+    Hello from Docker!
+    This message shows that your installation appears to be working correctly.
 
-To generate this message, Docker took the following steps:
- 1. The Docker client contacted the Docker daemon.
- 2. The Docker daemon pulled the "hello-world" image from the Docker Hub. (amd64)
- 3. The Docker daemon created a new container from that image which runs the executable that produces the output you are currently reading.
- 4. The Docker daemon streamed that output to the Docker client, which sent it to your terminal.
-```
+    To generate this message, Docker took the following steps:
+    1. The Docker client contacted the Docker daemon.
+    2. The Docker daemon pulled the "hello-world" image from the Docker Hub. (amd64)
+    3. The Docker daemon created a new container from that image which runs the executable that produces the output you are currently reading.
+    4. The Docker daemon streamed that output to the Docker client, which sent it to your terminal.
+    ```
 ### 1.1.2. What's a Container?
-> **Namespacing**: let's say program A runs in Py2, while program B in Py3. With namespacing, we can redirect these A & B which sends system call to kernel in the hard drive where we installed Py2 and Py3 to different partitions/segments. _(i.e. namespacing: isolating resources per process or group of processes)_
-
-> **Control groups (cgroups)**: limit amount of resources used per process
-
-> Namespacing & cgroups belong to Linux only! We can run Docker in our MacOS or Windows too because they are running a Linux Virtual Machine to create a Linux kernel. Run `docker version` on Windows and the terminal will tell you that Docker is running on `OS/Arch: linux/amd64`.
+* **Namespacing**: let's say program A runs in Py2, while program B in Py3. With namespacing, we can redirect these A & B which sends system call to kernel in the hard drive where we installed Py2 and Py3 to different partitions/segments. _(i.e. namespacing: isolating resources per process or group of processes)_
+* **Control groups (cgroups)**: limit amount of resources used per process
+* Namespacing & cgroups belong to Linux only! We can run Docker in our MacOS or Windows too because they are running a Linux Virtual Machine to create a Linux kernel. Run `docker version` on Windows and the terminal will tell you that Docker is running on `OS/Arch: linux/amd64`.
 * **Container**: A process or set of processes that have a grouping of resources specifically assigned to it. i.e. Portion of hard drive, network, ram, cpu etc. made available to a process.
 * **Image**: Snapshot of the file system along with very specific startup commands. _(i.e. FS Snapshot + Startup command)_
 ## 1.2. Manipulating Containers with The Docker Client
@@ -58,15 +56,15 @@ To generate this message, Docker took the following steps:
 * If you run a container via `docker start -a abcd1234`, it will run ***the container's*** default command! For example, the _busybox_ image comes with a default command `sh` but let's say we overrode it with `echo hi there` and created a container out of it. When we initiate that container again, it runs `echo hi there` and we cannot put extra command to it like `docker start -a abcd1234 echo hello world`. It throws an error.
 ### 1.2.5. Removing Stopped Containers
 * Output of `docker container prune` (Delete all stopped containers):
-> WARNING! This will remove all stopped containers. <br>Are you sure you want to continue? [y/N]
+    > WARNING! This will remove all stopped containers. <br>Are you sure you want to continue? [y/N]
 
 * Output of `docker system prune` (Delete all stopped containers):
-> WARNING! This will remove:
-> <br> \- all stopped containers
-> <br> \- all networks not used by at least one container
-> <br> \- all dangling images
-> <br> \- all dangling build cache
-> <br> Are you sure you want to continue? [y/N]
+    > WARNING! This will remove:
+    > <br> \- all stopped containers
+    > <br> \- all networks not used by at least one container
+    > <br> \- all dangling images
+    > <br> \- all dangling build cache
+    > <br> Are you sure you want to continue? [y/N]
 ### 1.2.6. Retrieving Log Outputs
 * `docker logs <container id>`
     * It's not _restarting_ or _rerunning_ the container, but gets the log of that initiated container.
@@ -82,7 +80,7 @@ To generate this message, Docker took the following steps:
 * When we run `docker run redis`, we can't run `redis-cli` in another terminal because it runs inside the container! We need to get inside this container to enter this command!
 ### 1.2.9. Executing Commands in Running Containers
 * `docker exec -it <container id> <command>`
-    * Execute an additional command in a container (Check help file for the flags.)
+    * Execute an additional command in a container (Check ``help`` file for the flags.)
 * `docker exec -it 2e532f124ba8 redis-cli`
 ### 1.2.10. The Purpose of the IT (-i -t) Flag
 * When you are running Docker on your machine, every single container you are running is running inside of a VM running Linux.
@@ -90,7 +88,7 @@ To generate this message, Docker took the following steps:
     1. **STDIN**: Stuff you type
     2. & 3. **STDOUT & STDERR**: Stuff that shows up on the screen
 * `-i, --interactive`: Attaches to our terminal's STDIN.
-* `-t, --tty`: Basically, prettifies/formats and shows up the output on our screen (actually, it does a bit more than that. "Allocates a pseudo-TTY [terminal]" as stated in help file.).
+* `-t, --tty`: Basically, prettifies/formats and shows up the output on our screen (actually, it does a bit more than that. "Allocates a pseudo-TTY [terminal]" as stated in help file).
 ### 1.2.11. Getting a Command Prompt in a Container
 * We'll open up a shell and not use `docker exec` over and over again.
 * `docker exec -it 2e532f124ba8 sh`: Opens up a shell. Then comes:<br>
@@ -148,6 +146,43 @@ To generate this message, Docker took the following steps:
 * Every command in the Dockerfile can be observed as `STEP 1/3: FROM alpine` etc.
 * After the first line of code (e.g. `FROM alpine`), following commands create an intermediate container (e.g. from the terminal log: `---> Running in 30as98d7fh`) to run the command on it. Then, the intermediate container gets shut down (e.g. from the terminal log: `Removing intermediate container 30as98d7fh`).
 * Each command gets the image from the previous step and creates a container out of it to build on top of it. When the commands end, the last container modifies the file system and the newest image is presented to us as our final image!
+### 1.3.6. Rebuilds with Cache
+* Assume we added another `RUN` command (e.g. `RUN apk add --updage gcc`) to the Dockerfile and build it once more. This time, Docker will use the cache up to the changed line and don't create a new intermediate container as mentioned above to fetch and install that package previously built. See the `---> Using cache` line in the terminal log.
+* This makes Docker installs much more faster.
+* Order of the operations matters even though the packages stay the same! If you change the order, Docker won't use the cached versions.
+### 1.3.7. Tagging an Image
+* It is easier to use an image tag instead of its image ID. So, you can use the `-t` tag flag to define a name to your image.
+* `docker build -t mert/mydockerproject:latest .`
+* This is a naming convention:
+    * `your_docker_id/repo_or_project_name:version`
+    * It's better to use a version number instead of `latest`.
+* Then you use: `docker run mert/mydockerproject` (If you don't specify version, it'll use the latest by default.)
+### 1.3.8. Manual Image Generation with Docker Commit
+**Quick Note for Windows Users:** In the upcoming lecture, we will be running a command to create a new image using docker commit with this command:<br>
+\> `docker commit -c 'CMD ["redis-server"]' CONTAINERID`<br>
+If you are a Windows user you may get an error like ``"/bin/sh: [redis-server]: not found"`` or ``"No Such Container"``<br>
+Instead, try running the command like this:<br>
+\> ``docker commit -c "CMD 'redis-server'" CONTAINERID``
+* We are not going to use this method much or at all but it's fun to learn.
+* So what's the deal here? We create and run a container with `alpine` base, modify it and `commit` it with and create a new image out of that container! Fun, huh?
+    * `docker run -it alpine sh` <br>
+    * `> apk add --update redis` (we are in that container's shell!)<br>
+    _- - - Switch to another terminal - - -_<br>
+    * `docker ps` (Get the running container ID) <br>
+    * `docker commit -c "CMD ['redis-server']" 42d67b4a3bcc` <br>
+    * `sha256:598729347yuıh54jb43k25hj4b6........` <br>
+    * `docker run 598729347yu` (Docker gets the rest of the ID. Don't need to write it all.)
+## 1.4. Making Real Projects with Docker (`simpleweb`)
+### 1.4.1. A Few Planned Errors
+* `npm install` the dependencies for Node JS Apps.
+* `npm start` to start up the server.
+
+
+
+
+
+
+
 
 <br>========================================================<br>
 ============OLD NOTES BELOW. WILL BE REVISED.===========<br>
@@ -155,36 +190,10 @@ To generate this message, Docker took the following steps:
 ===========OLD NOTES BELOW. WILL BE REVISED.===========<br>
 ========================================================<br>
 
-### Lesson 36: Rebuilds with Cache
-* Assume we added another `RUN` command (e.g. `RUN apk add --updage gcc`) to the Dockerfile and build it once more. This time, the Docker will use the cache and don't create a new intermediate container as mentioned above to fetch and install that package previously built. See the `---> Using cache` line in the terminal log.
-* This makes Docker installs much more faster.
-* Order of the operations matters even though the packages stay the same! If you change the order, Docker won't use the cached versions.
-### Lesson 37: Tagging an Image
-* It is easier to use an image tag instead of its image ID. So, you can use the `-t` tag flag to define a name to your image.
 
-* `docker build -t mert/mydockerproject:latest .`
 
-* This is a naming convention:
-    * `your_docker_id/repo_or_project_name:version`
-    * It's better to use a version number instead of `latest`.
-* Then you use:
 
-* `docker run mert/mydockerproject` (If you don't specify version, it'll use the latest by default.)
-### Lesson 38: Manual Image Generation with Docker Commit
-* We are not going to use this method much or at all but it's fun to learn.
 
-* `docker run -it alpine sh` <br>
-* `# apk add --update redis` (we are in that container's shell!)<br>
-_- - - Switch to another terminal - - -_<br>
-* `docker ps` (Get the running container ID) <br>
-* `docker commit -c "CMD ['redis-server']" 42d67b4a3bcc` <br>
-* `sha256:598729347yuıh54jb43k25hj4b6........` <br>
-* `docker run 598729347yu` (Docker gets the rest of the ID. Don't need to write it all.)
-
-## Section 4: Making Real Projects with Docker (`simpleweb`)
-### Lesson 42: A Few Planned Errors
-* `npm install` the dependencies for Node JS Apps.
-* `npm start` to start up the server.
 ### Lesson 44: Base Image Issues
 * You can look for specific tags from images on the Hub.
 * `alpine` version/tag means that you are using the most stripped down version of that image.
