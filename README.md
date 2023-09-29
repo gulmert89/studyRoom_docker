@@ -203,7 +203,14 @@ Instead, try running the command like this:<br>
     * [in the second terminal] `docker exec -it c41e0a33dee3 sh`
     * Here we are `/usr/app #`, waiting for a command in the terminal.
 * All of the files we copied including the dependencies installed with `npm install` is currently in ``/usr/app`` safely.
-
+### 1.4.6. Unnecessary Rebuilds
+* If you change the `index.js` file, you have to build the image once again.
+* ...and install all the dependencies. This is tiresome!
+### 1.4.7. Minimizing Cache Busting and Rebuilds
+* We split the `COPY` command [see the latest version of the Dockerfile in the `simpleweb` folder] so that unless the dependencies are changed, the rebuild process will use their cached versions and only copy the updated `index.js` to the image. The rebuild process will be much faster. 
+## 1.5. Docker Compose with Multiple Local Containers (`visits`)
+### 1.5.1. App Overview
+* Let's say we have a simple website with a Node app + Redis server, where Redis server counts the number of visits to the page. We can gather these two in a single container, but when we need to scale things up, creating multiple containers with these two might cause us trouble since the containers count the visits separately on their own. Thus, it's better to scale Node apps up and then connect these multiple containers to our Redis container.
 
 
 <br>========================================================<br>
@@ -219,14 +226,9 @@ Instead, try running the command like this:<br>
 
 
 
-### Lesson 49: Unnecessary Rebuilds
-* If you change the `index.js` file, you have to build the image once again.
-* ...and install all the dependencies. This is tiresome!
-### Lesson 50: Minimizing Cache Busting and Rebuilds
-* We split the `COPY` command so that unless the dependencies are changed, the rebuild process will use their cached versions and only copy the updated `index.js` to the image. The rebuild process will be much faster. 
-## Section 5: Docker Compose with Multiple Local Containers (`visits`)
-### Lesson 51: App Overview
-* Let's say we have a simple website with a Node app + Redis server, where Redis server counts the number of visits to the page. We can gather these two in a single container, but when we need to scale things up, creating multiple containers with these two might cause us trouble since those scaled Redis servers counts the visits separately. Thus, it's better to scale Node apps up and then connect these multiple containers to our Redis container.
+
+
+
 ### Lesson 52: App Overview
 * The dependency, `redis` is a JS client library for connecting to the Redis server to pull/update information.
 ### Lesson 54: Introducing Docker Compose
