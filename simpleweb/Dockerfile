@@ -1,6 +1,8 @@
 # Base image
 FROM node:14-alpine
 
+WORKDIR /usr/app
+
 # Dependencies
 COPY ./ ./
 RUN npm install
@@ -9,23 +11,19 @@ RUN npm install
 CMD ["npm", "start"]
 
 
-### Version 2 ###
-# # Base image
+### Version 3 ###
 # FROM node:14-alpine
-
-# # Dependencies
+# COPY ./ ./
 # RUN npm install
+# CMD ["npm", "start"]
 
-# # Default command
+### Version 2 ###
+# FROM node:14-alpine
+# RUN npm install
 # CMD ["npm", "start"]
 
 
 ### Version 1 ###
-# # Base image
 # FROM alpine
-
-# # Dependencies
 # RUN npm install
-
-# # Default command
 # CMD ["npm", "start"]

@@ -187,9 +187,22 @@ Instead, try running the command like this:<br>
 * In the command `COPY ./ ./`
     * the first `./` is the path to folder to copy from on _your machine_ relative to build context (which comes from `docker build .`),
     * the second `./` is the place to copy stuff to inside _the container_.
-
-
-
+### 1.4.4. Container Port Mapping
+* `docker run -p 8080:8080 image_id_name/project_name`: Route incoming requests to the (first #) port on local host to the (second #) port inside the container.
+* The ports don't need to be identical. Our local port could be 5000. (e.g. `-p 5000:8080`)
+* A container can reach out to the outer world (like the internet in `npm install` etc.) but local computer cannot get inside the docker container! This is why there needs to be a port mapping specified.
+### 1.4.5. Specifying a Working Directory
+* Copying local project folders and files into the container's root directory (with `COPY` command in the ``Dockerfile``) may cause problems.
+    * For example, there could be a folder named `lib` in your project and it might **overwrite** the `lib` folder inside the container!
+    * Hence, it is a better idea to specify a working directory ***in the container*** so you can work in a safe place (which you specified) without any conflict.
+* The command for it is `WORKDIR`.
+    * ``WORKDIR /usr/app``: 
+* So, we changed the `Dockerfile` and performed these steps to confirm we are in the working directory:
+    * `docker build --no-cache --progress=plain -t mert/simpleweb .`
+    * [in a second terminal] `docker ps`: To get the running container id.
+    * [in the second terminal] `docker exec -it c41e0a33dee3 sh`
+    * Here we are `/usr/app #`, waiting for a command in the terminal.
+* All of the files we copied including the dependencies installed with `npm install` is currently in ``/usr/app`` safely.
 
 
 
@@ -204,17 +217,8 @@ Instead, try running the command like this:<br>
 
 
 
-### Lesson 47: Container Port Mapping
-* `docker run -p 8080:8080 image_id/name`: Route incoming requests to the (first) port on local host to the (second) port inside the container.
-* The ports don't need to be identical. Our port could be 5000. (e.g. `-p 5000:8080`)
-### Lesson 48: Specifying a Working Directory
-* The command for it is `WORKDIR`.
-* You can directly enter to that WORKDIR folder. Example with `exec` command (for fun. there could be another way.):
-    * `docker run -p 8080:8080 mert/simpleweb`
-    * In another terminal:
-        * `docker ps`
-        * `docker exec -it 1f37acb2b2a8 sh`
-        * ...and we are in the `/usr/app` directory.
+
+
 ### Lesson 49: Unnecessary Rebuilds
 * If you change the `index.js` file, you have to build the image once again.
 * ...and install all the dependencies. This is tiresome!
