@@ -211,7 +211,20 @@ Instead, try running the command like this:<br>
 ## 1.5. Docker Compose with Multiple Local Containers (`visits`)
 ### 1.5.1. App Overview
 * Let's say we have a simple website with a Node app + Redis server, where Redis server counts the number of visits to the page. We can gather these two in a single container, but when we need to scale things up, creating multiple containers with these two might cause us trouble since the containers count the visits separately on their own. Thus, it's better to scale Node apps up and then connect these multiple containers to our Redis container.
-
+* The dependency `redis` is a JS client library for connecting to the Redis server to pull/update information.
+### 1.5.2. App Server Starter Code
+* In the `javascript` code we wrote, I couldn't grasp what `.set` method does in either the last time I studied the course or now. Then I searched about it and the part I was struggling with dawned on me: I thought that constant was a string. No! That Redis method returns a _map object_ obviously! Thus, it has a key & value pairs.
+    * ``client.set('visits', 0);`` ---> Here, we set `visits` key to a value, which is zero. `client` is a map object. I thought it was related to a URL or something on the server we were building but no! It's a simple `key: value` pair (as in Python). 
+* Also, I changed a line to format the js string. BUT REMEMBER: To format a string in js, the brackets should be \`, not **'** or **"**.
+### 1.5.3. Introducing Docker Compose
+* When we tried to run the node app container, it throws an error about failing to connect Redis server. We run a Redis server in another terminal but it still throws the error. Why? Because these two containers don't form any communication automatically. They are two isolated processes, i.e. separate containers! To connect them, we have 2 options:
+    * Docker CLI's Networking Features
+        * It's pain in the arse! Need to handle bunch of commands and rerun every single time!
+        * The teacher said that he had never seen a person that did this in the industry.
+    * Docker Compose
+        * It's a separate CLI tool.
+        * Used to start up multiple containers at the same time.
+        * Automates some of the long-winded arguments we were passing to `docker run`.
 
 <br>========================================================<br>
 ============OLD NOTES BELOW. WILL BE REVISED.===========<br>
@@ -229,17 +242,6 @@ Instead, try running the command like this:<br>
 
 
 
-### Lesson 52: App Overview
-* The dependency, `redis` is a JS client library for connecting to the Redis server to pull/update information.
-### Lesson 54: Introducing Docker Compose
-* When we tried to run the node app container, it throws an error about failing to connect Redis server. We run a Redis server in another terminal but it still throws the error. Why? Because these two containers don't have any automatic communication between two. They are two isolated processes, separate containers! To connect them, we have 2 options:
-    * Docker CLI's Networking Features
-        * It's pain in the arse! Need to handle bunch of commands and rerun every single time!
-        * The teacher said that he had never seen a person that did this in the industry.
-    * Docker Compose
-        * It's a separate CLI tool.
-        * Used to start up multiple containers at the same time.
-        * Automates some of the long-winded arguments we were passing to `docker run`.
 ### Lesson 55: Docker Compose Files
 * `docker-compose.yml` file contains all the options we'd normally pass to `docker-cli`. We're gonna tell that file:
     * _Here are the containers I want created:_
