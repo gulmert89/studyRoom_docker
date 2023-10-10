@@ -225,6 +225,30 @@ Instead, try running the command like this:<br>
         * It's a separate CLI tool.
         * Used to start up multiple containers at the same time.
         * Automates some of the long-winded arguments we were passing to `docker run`.
+### 1.5.4. Docker Compose Files
+* About docker-compose file versioning: "If only the major version is given (``version: '3'``), the latest minor version is used by default." - From [Docker docs](https://docs.docker.com/compose/compose-file/compose-versioning/#version-3)
+* `docker-compose.yml` file contains all the options we'd normally pass to `docker-cli`. We're gonna tell that file:
+    * _Here are the containers I want created:_
+        * ***redis-server***
+            * _Make it using the `redis` image._
+        * ***node-app***
+            * _Make it using the Dockerfile in the current directory._
+            * _Map port 8081 to 8081._
+* Inside the `yml` file, under the `services`, we use `build: .` to build the Dockerfile inside our directory.
+* `services` are like container. Thus, we list the containers under it but it's not like containers exactly!
+* As you studied in a different YouTube video, you know that dash (`-`) in `yml` file specifies an array. So we can map many ports etc. we want.
+### 1.5.5. Networking with Docker Compose
+* About the line `host: 'redis-server'` in the `index.js`: Docker will see this host name as a http request and understand that it is looking for the container named `redis-server`. If it was a normal node app, the value would be a regular URL.
+    * Also, we specified the `port: 6379` in the same dictionary under `host`. It is the default port for redis server but we added it anyway.
+* Then docker-compose will automatically connect those containers/services.
+### 1.5.6. Docker Compose Commands
+* `docker-compose up`:
+    * The equivalent of `docker run myimage`
+    * If it is not built, it builds it.
+    * We don't specify an image name. It finds them in the docker-compose file.
+* `docker-compose up --build`:
+    *  `docker build .` + `docker run myimage`
+    * ``--build``: It builds the services once again if something has been changed. Without this, the already built services will run and the changes will be ignored. 
 
 <br>========================================================<br>
 ============OLD NOTES BELOW. WILL BE REVISED.===========<br>
@@ -243,22 +267,9 @@ Instead, try running the command like this:<br>
 
 
 ### Lesson 55: Docker Compose Files
-* `docker-compose.yml` file contains all the options we'd normally pass to `docker-cli`. We're gonna tell that file:
-    * _Here are the containers I want created:_
-        * ***redis-server***
-            * _Make it using the `redis` image._
-        * ***node-app***
-            * _Make it using the Dockerfile in the current directory._
-            * _Map port 8081 to 8081._
-* Inside the `yml` file, under the `services`, we use `build: .` to build the Dockerfile inside our directory.
-* Dash (`-`) in `yml` file specifies an array. So we can map many ports we want.
-### Lesson 56: Networking with Docker Compose
-* In the `yml` file at the line `host: 'redis-server'`, docker will see this host name as a http request and understand that it is looking for the other container named `redis-server`.
-* `port: 6379` is the default port but we added it anyway.
-* Then docker compose will automatically connect those containers.
-### Lesson 57: Docker Compose Commands
-* `docker-compose up` is the equivalent of `docker run myimage`<br>
-* `docker-compose up --build` is `docker build .` + `docker run myimage`<br>
+
+### Lesson 56: 
+### Lesson 57: 
 ### Lesson 58: Stopping Docker Compose Containers
 * Launch in the background: `docker-compose up -d`.
 * Since we have multiple containers running in our docker-compose, it would be a pain to stop them all one by one with `docker stop container_id`. So, we have `docker-compose down`.

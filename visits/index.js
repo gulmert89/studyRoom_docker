@@ -1,9 +1,12 @@
 const express = require('express');
 const redis = require('redis');
-const PORT_LISTENING = 8081;
+const PORT_LISTENING = 8002;
 
 const app = express();
-const client = redis.createClient();
+const client = redis.createClient({
+    host: "redis-server",
+    port: 6379
+});
 client.set('visits', 0);
 
 app.get('/', (req, res) => {
