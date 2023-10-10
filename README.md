@@ -267,7 +267,7 @@ Instead, try running the command like this:<br>
             * We can use it with workers doing a scheduled job like in Pubtimer. When everything successfully finish, it stops the container. Or else, it restarts the job/worker. It's pretty useful when I think about the database issues in Pubtimer. I have to restart them manually when things are fucked up!
         * **unless-stopped**: Always restart unless we (the developers) forcibly stop it.
 * These policies are defined under the `yml` file.
-    * We added `restart: always` under the `node-app` service.
+    * We added `restart: on-failure` under the `node-app` service.
 ### 1.5.9. Container Status with Docker Compose
 * `docker-compose ps` is the equivalent of `docker ps` **BUT** it only works in where your related `yml` file is. Thus, it doesn't work globally as `docker ps`. It throws an error if it can't find the file in the working directory.
 
