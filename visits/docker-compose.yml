@@ -3,6 +3,18 @@ services:
     redis-server:
         image: redis
     node-app:
+        restart: on-failure
         build: .
         ports:
-            - 1989:8002  # local_port:container_port
+            - 1989:2023  # local_port:container_port
+
+
+### Version 1 ###
+# version: '3'
+# services:
+#     redis-server:
+#         image: redis
+#     node-app:
+#         build: .
+#         ports:
+#             - 1989:2023

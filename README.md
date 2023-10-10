@@ -249,6 +249,29 @@ Instead, try running the command like this:<br>
 * `docker-compose up --build`:
     *  `docker build .` + `docker run myimage`
     * ``--build``: It builds the services once again if something has been changed. Without this, the already built services will run and the changes will be ignored. 
+### 1.5.7. Stopping Docker Compose Containers
+* Launch in the background: `docker-compose up -d`.
+    * `-d` or `--detach`: detach
+* Since we have multiple containers running in our docker-compose, it would be a pain to stop them all one by one with `docker stop container_id`. So, we have:
+    * `docker-compose down`
+### 1.5.8. Container Maintenance with Compose + Automatic Container Restarts
+* We changed the `index.js` to make our server crashed. (see the error: `visits_node-app_1 exited with code 0`)
+    * `code 0` means that _we exited and everything is OK_. 1, 2, 3, etc. means that _we exited because something went wrong!_
+* However, only the node-app has crashed and redis server is still online. How about we restart the container?
+    * ***Restart Policies:***
+        * **"no"**: Never attempt to restart this container if it stops or crashed.
+            * Note the quotes around `no`! In a ``yml`` file, `no` without the quotes is a boolean value. Thus, we make it a string `"no"`, with single or double quotes.
+        * **always**: If stops for any reason, always attempt to restart it.
+        * **on-failure**: Only restart if the container stops with an error code.
+            * Hence, it won't restart on ``process.exit(0)`` since ``code 0`` means _we exited and everything is OK_. It'll restart other than ``code 0``.
+            * We can use it with workers doing a scheduled job like in Pubtimer. When everything successfully finish, it stops the container. Or else, it restarts the job/worker. It's pretty useful when I think about the database issues in Pubtimer. I have to restart them manually when things are fucked up!
+        * **unless-stopped**: Always restart unless we (the developers) forcibly stop it.
+* These policies are defined under the `yml` file.
+    * We added `restart: always` under the `node-app` service.
+### 1.5.9. Container Status with Docker Compose
+* `docker-compose ps` is the equivalent of `docker ps` **BUT** it only works in where your related `yml` file is. Thus, it doesn't work globally as `docker ps`. It throws an error if it can't find the file in the working directory.
+
+
 
 <br>========================================================<br>
 ============OLD NOTES BELOW. WILL BE REVISED.===========<br>
@@ -261,30 +284,7 @@ Instead, try running the command like this:<br>
 
 
 
-
-
-
-
-
-### Lesson 55: Docker Compose Files
-
-### Lesson 56: 
-### Lesson 57: 
-### Lesson 58: Stopping Docker Compose Containers
-* Launch in the background: `docker-compose up -d`.
-* Since we have multiple containers running in our docker-compose, it would be a pain to stop them all one by one with `docker stop container_id`. So, we have `docker-compose down`.
-### Lesson 59, 60:  Container Maintenance with Compose, Automatic Container Restarts
-* We changed the `index.js` to make our server crashed. (see the error: `visits_node-app_1 exited with code 0`)
-    * `code 0` means that _we exited and everything is OK_. 1, 2, 3, etc. means that _we exited because something went wrong!_
-* However, only the node-app has crashed and redis server is still online. How about we restart the container?
-    * ***Restart Policies:***
-        * **"no"**: Never attempt to restart this container if it stops or crashed.
-        * **always**: If stops for any reason, always attempt to restart it.
-        * **on-failure**: Only restart if the container stops with an error code.
-        * **unless-stopped**: Always restart unless we (the developers) forcibly stop it.
-* We added `restart: always` under the `node-app` in our `yml` file.
-### Lesson 61:  Container Status with Docker Compose
-* `docker-compose ps` is the equivalent of `docker ps` **BUT** it only works in where your related `yml` file is. Thus, it doesn't work globally as `docker ps`. It throws an error if it can't find the file in the working directory.
+### Lesson 61:  
 ## Section 6: Creating a Production-Grade Workflow (`frontend`)
 ### Lesson 69: Creating the Dev Dockerfile
 * `npm run start` in the Docker container is for development.
