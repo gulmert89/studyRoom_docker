@@ -213,7 +213,7 @@ Instead, try running the command like this:<br>
 * Let's say we have a simple website with a Node app + Redis server, where Redis server counts the number of visits to the page. We can gather these two in a single container, but when we need to scale things up, creating multiple containers with these two might cause us trouble since the containers count the visits separately on their own. Thus, it's better to scale Node apps up and then connect these multiple containers to our Redis container.
 * The dependency `redis` is a JS client library for connecting to the Redis server to pull/update information.
 ### 1.5.2. App Server Starter Code
-* In the `javascript` code we wrote, I couldn't grasp what `.set` method does in either the last time I studied the course or now. Then I searched about it and the part I was struggling with dawned on me: I thought that constant was a string. No! That Redis method returns a _map object_ obviously! Thus, it has a key & value pairs.
+* In the `javascript` code we wrote, I couldn't grasp what `.set` method does in either the last time I studied the course or now. Then I searched about it and the part I was struggling with dawned on me: I thought that constant was a string. No! That Redis method returns a _map object_! Thus, it has a key & value pairs.
     * ``client.set('visits', 0);`` ---> Here, we set `visits` key to a value, which is zero. `client` is a map object. I thought it was related to a URL or something on the server we were building but no! It's a simple `key: value` pair (as in Python). 
 * Also, I changed a line to format the js string. BUT REMEMBER: To format a string in js, the brackets should be \`, not **'** or **"**.
 ### 1.5.3. Introducing Docker Compose
@@ -235,8 +235,8 @@ Instead, try running the command like this:<br>
             * _Make it using the Dockerfile in the current directory._
             * _Map port 8081 to 8081._
 * Inside the `yml` file, under the `services`, we use `build: .` to build the Dockerfile inside our directory.
-* `services` are like container. Thus, we list the containers under it but it's not like containers exactly!
-* As you studied in a different YouTube video, you know that dash (`-`) in `yml` file specifies an array. So we can map many ports etc. we want.
+* `services` are like container. Thus, we list the containers under it but it's not like _containers_ exactly!
+* Dash (`-`) in `yml` file specifies an array. So we can map many ports etc. we want.
 ### 1.5.5. Networking with Docker Compose
 * About the line `host: 'redis-server'` in the `index.js`: Docker will see this host name as a http request and understand that it is looking for the container named `redis-server`. If it was a normal node app, the value would be a regular URL.
     * Also, we specified the `port: 6379` in the same dictionary under `host`. It is the default port for redis server but we added it anyway.
@@ -244,7 +244,7 @@ Instead, try running the command like this:<br>
 ### 1.5.6. Docker Compose Commands
 * `docker-compose up`:
     * The equivalent of `docker run myimage`
-    * If it is not built, it builds it.
+    * If it is not built already, docker-compose builds it.
     * We don't specify an image name. It finds them in the docker-compose file.
 * `docker-compose up --build`:
     *  `docker build .` + `docker run myimage`
@@ -270,8 +270,12 @@ Instead, try running the command like this:<br>
     * We added `restart: on-failure` under the `node-app` service.
 ### 1.5.9. Container Status with Docker Compose
 * `docker-compose ps` is the equivalent of `docker ps` **BUT** it only works in where your related `yml` file is. Thus, it doesn't work globally as `docker ps`. It throws an error if it can't find the file in the working directory.
-
-
+* I found [this repo](https://github.com/compose-spec/compose-spec/blob/master/spec.md#services-top-level-element) for docker-compose syntax and keywords.
+## 1.6. Creating a Production-Grade Workflow (`frontend`)
+### 1.6.1. Necessary Commands
+* `npm run start` starts up a development server. _For development use only!_
+* `npm run build` builds a production version of the application.
+* `npm run test` tests our app and we are only concerned here that all the test are passed or not.
 
 <br>========================================================<br>
 ============OLD NOTES BELOW. WILL BE REVISED.===========<br>
@@ -282,13 +286,8 @@ Instead, try running the command like this:<br>
 
 
 
-
-
-### Lesson 61:  
-## Section 6: Creating a Production-Grade Workflow (`frontend`)
 ### Lesson 69: Creating the Dev Dockerfile
-* `npm run start` in the Docker container is for development.
-* `npm run build` is for production.
+
 * We created `Dockerfile.dev` for development purposes. For the prod, good old Dockerfile is sufficient.
 * To run a custom Dockerfile name, use `docker build -f Dockerfile.dev .`
 ### Lesson 70: Duplicating Dependencies
